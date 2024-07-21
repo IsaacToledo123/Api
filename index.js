@@ -2,10 +2,16 @@ const express = require("express");
 const { Server } = require("socket.io");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
-const https =require('https')
-const fs=('fs')
+const https = require('https');  // Corrección de importación
+const fs = require('fs');  // Corrección de importación
 const app = express();
 const port = 3005;
+
+// Opciones para HTTPS
+const options = {
+  key: fs.readFileSync('/ruta/a/su/clave.key'),
+  cert: fs.readFileSync('/ruta/a/su/certificado.crt')
+};
 
 app.use(express.json());
 app.use(cors({
@@ -15,10 +21,15 @@ app.use(cors({
   credentials: true
 }));
 
-const server = app.listen(port, () => {
+// Crear servidor HTTPS
+const server = https.createServer(options, app);
+
+// Iniciar servidor HTTPS
+server.listen(port, () => {
   console.log(`API corriendo en el puerto ${port}`);
 });
 
+// Configurar Socket.IO para usar el servidor HTTPS
 const ServerWS = new Server(server, {
   cors: { 
     origin: "*", 
