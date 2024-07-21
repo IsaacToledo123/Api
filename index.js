@@ -9,8 +9,8 @@ const port = 3005;
 
 // Opciones para HTTPS
 const options = {
-  key: fs.readFileSync('/ruta/a/su/clave.key'),
-  cert: fs.readFileSync('/ruta/a/su/certificado.crt')
+  key: fs.readFileSync('/etc/letsencrypt/live/wss.soursop.lat/privkey.pem'),
+  cert: fs.readFileSync('/etc/letsencrypt/live/wss.soursop.lat/fullchain.pem')
 };
 
 app.use(express.json());
