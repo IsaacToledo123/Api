@@ -8,7 +8,7 @@ const port = 3005;
 
 app.use(express.json());
 app.use(cors({
-  origin: "https://soursop.lat",
+  origin: '*',
   methods: ["GET", "POST"],
   allowedHeaders: ["Authorization"],
   credentials: true
@@ -20,7 +20,7 @@ const server = app.listen(port, () => {
 
 const ServerWS = new Server(server, {
   cors: { 
-    origin: "https://soursop.lat", 
+    origin: "*", 
   },
 });
 
