@@ -7,7 +7,7 @@ const fs = require('fs');  // Corrección de importación
 const app = express();
 const port = 3005;
 
-// Opciones para HTTPS
+
 const options = {
   key: fs.readFileSync('/etc/letsencrypt/live/wss.soursop.lat/privkey.pem'),
   cert: fs.readFileSync('/etc/letsencrypt/live/wss.soursop.lat/fullchain.pem')
@@ -37,14 +37,10 @@ const ServerWS = new Server(server, {
 });
 
 const jwtSecret = process.env.JWT_SECRET_KEY;
+console.log('JWT Secret:', jwtSecret); 
 
 ServerWS.use((socket, next) => {
-  const authHeader = socket.handshake.headers['authorization'];
-  if (!authHeader) {
-    return next(new Error('Authentication error'));
-  }
-
-  const token = authHeader.split(' ')[1];
+  const token = socket.handshake.headers['authorization']?.split(' ')[1];
   if (!token) {
     return next(new Error('Authentication error'));
   }
