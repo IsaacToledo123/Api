@@ -6,7 +6,8 @@ const https = require('https');  // Corrección de importación
 const fs = require('fs');  // Corrección de importación
 const app = express();
 const port = 3005;
-
+const dotenv = require('dotenv');
+dotenv.config();
 
 const options = {
   key: fs.readFileSync('/etc/letsencrypt/live/wss.soursop.lat/privkey.pem'),
@@ -85,7 +86,7 @@ const checkAuthorization = (socket, data, type) => {
 ServerWS.on("connection", (socket) => {
   console.log("Cliente conectado");
 
-  socket.on("nivelAgua", (data) => {
+  socket.on("nivelAgua", (data) => { // en esta cola hacer una operacion segun la cola de nivel de agua si recibe en la api un mensaje de "hay agua" significa que esta lleno ,el valor de que esta lleno es de 20l y en el misma operacion va a consumir la cola de flujoAgua l 
     if (!validateData(data, 'nivelAgua')) {
       socket.emit('error', 'Invalid data');
       return;
