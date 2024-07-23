@@ -1,15 +1,9 @@
-// Servidor WebSocket
 const express = require("express");
 const { Server } = require("socket.io");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const https = require('https');
 const fs = require('fs');
-const dotenv = require('dotenv');
-
-// Cargar variables de entorno
-dotenv.config();
-
 const app = express();
 const port = 3005;
 
@@ -42,7 +36,7 @@ const ServerWS = new Server(server, {
 });
 
 const jwtSecret = process.env.JWT_SECRET_KEY;
-console.log('JWT Secret:', jwtSecret);
+console.log('JWT Secret:', jwtSecret); 
 
 ServerWS.use((socket, next) => {
   const token = socket.handshake.headers['authorization']?.split(' ')[1];
@@ -60,97 +54,31 @@ ServerWS.use((socket, next) => {
   });
 });
 
-const validateData = (data, type) => {
-  if (typeof data !== 'object' || data === null) {
-    return false;
-  }
-
-  switch(type) {
-    case 'nivelAgua':
-    case 'nivelFertilizante':
-      return typeof data.value === 'number' && data.value >= 0 && data.value <= 100;
-    case 'ph':
-      return typeof data.humedad === 'number' &&
-             typeof data.temperatura === 'number' &&
-             typeof data.conductividad === 'number';
-    case 'flujoAgua':
-      return typeof data.litrosPorMinuto === 'number' &&
-             typeof data.totalConsumido === 'number';
-    case 'estado':
-      return ['bueno', 'malo', 'excelente'].includes(data.value);
-    default:
-      return false;
-  }
-};
-
-const checkAuthorization = (socket, data, type) => {
-  return true;
-};
-
+// Simplified event handling without validation or authorization
 ServerWS.on("connection", (socket) => {
   console.log("Cliente conectado");
 
   socket.on("nivelAgua", (data) => {
-    if (!validateData(data, 'nivelAgua')) {
-      socket.emit('error', 'Invalid data');
-      return;
-    }
-    if (!checkAuthorization(socket, data, 'nivelAgua')) {
-      socket.emit('error', 'Unauthorized');
-      return;
-    }
     console.log("Nuevo mensaje de nivel de agua:", data);
     ServerWS.emit("nuevo", { tipo: "nivelAgua", data });
   });
 
   socket.on("ph", (data) => {
-    if (!validateData(data, 'ph')) {
-      socket.emit('error', 'Invalid data');
-      return;
-    }
-    if (!checkAuthorization(socket, data, 'ph')) {
-      socket.emit('error', 'Unauthorized');
-      return;
-    }
     console.log("Nuevo mensaje de pH:", data);
     ServerWS.emit("nuevo", { tipo: "ph", data });
   });
 
   socket.on("flujoAgua", (data) => {
-    if (!validateData(data, 'flujoAgua')) {
-      socket.emit('error', 'Invalid data');
-      return;
-    }
-    if (!checkAuthorization(socket, data, 'flujoAgua')) {
-      socket.emit('error', 'Unauthorized');
-      return;
-    }
     console.log("Nuevo mensaje de flujo de agua:", data);
     ServerWS.emit("nuevo", { tipo: "flujoAgua", data });
   });
 
   socket.on("Estado de la planta", (data) => {
-    if (!validateData(data, 'estado')) {
-      socket.emit('error', 'Invalid data');
-      return;
-    }
-    if (!checkAuthorization(socket, data, 'estado')) {
-      socket.emit('error', 'Unauthorized');
-      return;
-    }
     console.log("Nuevo mensaje de estado:", data);
     ServerWS.emit("nuevo", { tipo: "estado", data });
   });
 
   socket.on("nivelFertilizante", (data) => {
-    if (!validateData(data, 'nivelFertilizante')) {
-      socket.emit('error', 'Invalid data');
-      return;
-    }
-    if (!checkAuthorization(socket, data, 'nivelFertilizante')) {
-      socket.emit('error', 'Unauthorized');
-      return;
-    }
     console.log("Nuevo mensaje de nivel de fertilizante:", data);
     ServerWS.emit("nuevo", { tipo: "nivelFertilizante", data });
   });
