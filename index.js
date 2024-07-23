@@ -42,6 +42,7 @@ console.log('JWT Secret:', jwtSecret);
 ServerWS.use((socket, next) => {
   const token = socket.handshake.headers['authorization']?.split(' ')[1];
   if (!token) {
+    console.log("No token provided");
     return next(new Error('Authentication error'));
   }
 
@@ -68,7 +69,7 @@ ServerWS.on("connection", (socket) => {
       return;
     }
     console.log("Nuevo mensaje de nivel de agua:", data);
-    ServerWS.emit("nuevo", { tipo: "nivelAgua", data });
+    ServerWS.emit("nivelAgua", data);
   });
 
   socket.on("ph", (data) => {
@@ -77,7 +78,7 @@ ServerWS.on("connection", (socket) => {
       return;
     }
     console.log("Nuevo mensaje de pH:", data);
-    ServerWS.emit("nuevo", { tipo: "ph", data });
+    ServerWS.emit("ph", data);
   });
 
   socket.on("flujoAgua", (data) => {
@@ -86,7 +87,7 @@ ServerWS.on("connection", (socket) => {
       return;
     }
     console.log("Nuevo mensaje de flujo de agua:", data);
-    ServerWS.emit("nuevo", { tipo: "flujoAgua", data });
+    ServerWS.emit("flujoAgua", data);
   });
 
   socket.on("estado", (data) => {
@@ -95,7 +96,7 @@ ServerWS.on("connection", (socket) => {
       return;
     }
     console.log("Nuevo mensaje de estado:", data);
-    ServerWS.emit("nuevo", { tipo: "estado", data });
+    ServerWS.emit("estado", data);
   });
 
   socket.on("nivelFertilizante", (data) => {
@@ -104,7 +105,7 @@ ServerWS.on("connection", (socket) => {
       return;
     }
     console.log("Nuevo mensaje de nivel de fertilizante:", data);
-    ServerWS.emit("nuevo", { tipo: "nivelFertilizante", data });
+    ServerWS.emit("nivelFertilizante", data);
   });
 
   socket.on("disconnect", () => {
